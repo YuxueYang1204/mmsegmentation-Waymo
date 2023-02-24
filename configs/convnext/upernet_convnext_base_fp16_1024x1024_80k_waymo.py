@@ -1,6 +1,6 @@
 _base_ = [
     '../_base_/models/upernet_convnext.py',
-    '../_base_/datasets/waymo.py', '../_base_/default_runtime.py',
+    '../_base_/datasets/waymo_1024x1024.py', '../_base_/default_runtime.py',
     '../_base_/schedules/schedule_80k.py'
 ]
 # crop_size = (640, 640)
@@ -28,15 +28,13 @@ optimizer = dict(
     constructor='LearningRateDecayOptimizerConstructor',
     _delete_=True,
     type='AdamW',
-    lr=0.00001,
+    lr=0.0001,
     betas=(0.9, 0.999),
     weight_decay=0.05,
     paramwise_cfg={
         'decay_rate': 0.9,
         'decay_type': 'stage_wise',
-        'num_layers': 12,
-        'custom_keys': {
-            'head': dict(lr_mult=10.)}
+        'num_layers': 12
     })
 
 lr_config = dict(
@@ -51,7 +49,9 @@ lr_config = dict(
 
 # By default, models are trained on 8 GPUs with 2 images per GPU
 data = dict(samples_per_gpu=2)
+evaluation = dict(interval=8000, metric='mIoU', pre_eval=True, start=70000)
 # fp16 settings
 optimizer_config = dict(type='Fp16OptimizerHook', loss_scale='dynamic')
 # fp16 placeholder
 fp16 = dict()
+load_from = 'work_dirs/convnext_1024_1024_160_resume/iter_144000.pth'
