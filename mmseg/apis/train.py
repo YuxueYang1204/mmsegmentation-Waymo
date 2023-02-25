@@ -92,7 +92,7 @@ def train_segmentor(model,
         k: v
         for k, v in cfg.data.items() if k not in [
             'train', 'val', 'test', 'train_dataloader', 'val_dataloader',
-            'test_dataloader'
+            'test_dataloader', 'infer'
         ]
     })
 
